@@ -30,10 +30,11 @@ python -m http.server 8000 -d site # 或者 npx serve site
 ### 方式一：Git 集成（推荐）
 
 1. Cloudflare 控制台 → Workers & Pages → 新建 Pages 项目 → 连接 Git 仓库。
-2. 构建设置会自动读仓库根目录的 `wrangler.toml`：
-   - 构建命令：`node tools/site/build.mjs`
-   - 输出目录：`site`
+2. 在构建设置（Build Settings）中配置：
+   - 构建命令（Build command）：`node tools/site/build.mjs`
+   - 输出目录（Build output directory）：`site`（也会自动从 `wrangler.toml` 读取）
    - Node 版本：22（默认即可，脚本只用了内置模块）
+   *(注意：Cloudflare Pages 的 `wrangler.toml` 暂不支持 `[build]` 配置段，构建命令需在控制台界面中指定)*
 3. 保存并部署。以后正文一改，push 到 main 就会自动重建。
 
 ### 方式二：命令行
