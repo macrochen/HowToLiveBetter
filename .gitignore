@@ -1,4 +1,9 @@
 .idea/
 .junie/
+.workbuddy-ai/
 node_modules/
 dist/
+
+# 网站的构建产物：由 node tools/site/build.mjs 生成，不入库
+site/data.json
+site/icons/

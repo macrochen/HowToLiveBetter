@@ -1,0 +1,50 @@
+# 正文一改就把网站重新构建并发布到 Cloudflare Pages。
+#
+# 需要先在仓库里配两个 Secret（Settings → Secrets and variables → Actions）：
+#   CLOUDFLARE_API_TOKEN   Cloudflare 的 API 令牌，权限至少要有 Pages:Edit
+#   CLOUDFLARE_ACCOUNT_ID  账号 ID（控制台右侧可复制）
+# 没配这两个 Secret 时，这个工作流会整条跳过，不会报红。
+#
+# 也可以不用这个工作流：本地跑 `node tools/site/build.mjs`，再用
+# `npx wrangler pages deploy site --project-name=howtolivebetter` 手动发布。
+name: 网站
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - README.md
+      - book/**
+      - docs/*.md
+      - site/**
+      - tools/site/**
+      - wrangler.toml
+      - .github/workflows/site.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+env:
+  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+jobs:
+  deploy:
+    name: 构建并发布
+    runs-on: ubuntu-latest
+    if: ${{ env.CLOUDFLARE_API_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: 生成 data.json 和 PWA 图标
+        run: node tools/site/build.mjs
+      - name: 发布到 Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy site --project-name=howtolivebetter

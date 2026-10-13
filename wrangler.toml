@@ -1,0 +1,16 @@
+# Cloudflare Pages 配置
+#
+# 站点是纯静态的：site/ 目录里的文件就是全部产物，data.json 和 icons/ 由
+# `node tools/site/build.mjs` 生成（零依赖，只用 Node 内置模块）。
+#
+# 两种部署方式：
+#   1. 命令行：  npx wrangler pages deploy site --project-name=howtolivebetter
+#      （先跑一次 node tools/site/build.mjs，或者依赖下面的 [build] 自动跑）
+#   2. Git 集成：在 Cloudflare 控制台连上仓库，构建命令和输出目录会自动读这里。
+#
+name = "howtolivebetter"
+compatibility_date = "2026-10-13"
+pages_build_output_dir = "site"
+
+[build]
+command = "node tools/site/build.mjs"
