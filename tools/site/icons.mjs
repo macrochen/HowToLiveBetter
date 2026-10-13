@@ -74,6 +74,32 @@ function makeIcon(size, maskable) {
   };
 }
 
+export function makeIco(sizes = [16, 32, 48]) {
+  const images = sizes.map((s) => [s, png(s, makeIcon(s, false))]);
+  const count = images.length;
+  const header = Buffer.alloc(6);
+  header.writeUInt16LE(0, 0);
+  header.writeUInt16LE(1, 2);
+  header.writeUInt16LE(count, 4);
+
+  const entries = [];
+  let offset = 6 + count * 16;
+  for (const [size, buf] of images) {
+    const dir = Buffer.alloc(16);
+    dir[0] = size === 256 ? 0 : size;
+    dir[1] = size === 256 ? 0 : size;
+    dir[2] = 0;
+    dir[3] = 0;
+    dir.writeUInt16LE(1, 4);
+    dir.writeUInt16LE(32, 6);
+    dir.writeUInt32LE(buf.length, 8);
+    dir.writeUInt32LE(offset, 12);
+    entries.push(dir);
+    offset += buf.length;
+  }
+  return Buffer.concat([header, ...entries, ...images.map(([, b]) => b)]);
+}
+
 export function writeIcons(dir) {
   mkdirSync(dir, { recursive: true });
   const defs = [
@@ -85,3 +111,5 @@ export function writeIcons(dir) {
   for (const [name, size, maskable] of defs) writeFileSync(join(dir, name), png(size, makeIcon(size, maskable)));
   return defs.length;
 }
+
+export { png, makeIcon };

@@ -56,6 +56,10 @@ for (const [img, mime] of [['ads/mcyyy-side.webp', 'image/webp'], ['ads/wechat-r
   html = html.replace(`src="${img}"`, `src="data:${mime};base64,${data}"`);
 }
 
+// Favicon 转 data URI，保证离线副本双击打开也有标签页图标
+const favSvg = readFileSync(resolve(ROOT, 'favicon.svg'), 'utf8');
+html = html.replace('href="favicon.svg"', `href="data:image/svg+xml;utf8,${encodeURIComponent(favSvg)}"`);
+
 // 页脚注明这是哪一版的离线副本
 const foot = '<div class="foot">';
 must(foot, '页脚');

@@ -10,7 +10,7 @@
 import { readFileSync, readdirSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { writeIcons } from './icons.mjs';
+import { writeIcons, makeIco } from './icons.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const OUT = join(ROOT, 'site', 'data.json');
@@ -206,6 +206,7 @@ const data = {
 
 writeFileSync(OUT, JSON.stringify(data));
 const icons = writeIcons(join(ROOT, 'site', 'icons'));
+writeFileSync(join(ROOT, 'site', 'favicon.ico'), makeIco());
 const kb = (Buffer.byteLength(JSON.stringify(data)) / 1024).toFixed(0);
 const st = data.meta.stats;
 console.log(
