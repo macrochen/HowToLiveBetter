@@ -3,7 +3,7 @@
    策略：页面和代码（html/js/css/manifest）走网络优先，断网回落到缓存；
         data.json 走「先给旧的、后台更新」，2 MB 的文件不至于每次开都等下载；
         图标这类几乎不变的走缓存优先。 */
-const VERSION = 'hltb-v1';
+const VERSION = 'hltb-v2';
 const SHELL = [
   './',
   'index.html',

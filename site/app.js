@@ -111,7 +111,7 @@ function applyTheme() {
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute('content', dark ? '#17181c' : '#ffffff');
 }
-function applyFs() { document.body.dataset.fs = S.fs; }
+function applyFs() { document.documentElement.dataset.fs = S.fs; document.body.dataset.fs = S.fs; }
 
 let toastT = 0;
 function toast(msg) {
@@ -735,7 +735,7 @@ function renderSearch() {
     countEl.append('共 ', h('b', { text: String(hits.length) }), ' 条');
     if (!hits.length) {
       results.append(h('div', { class: 'empty' }, icon('search'), h('div', { text: '没有匹配的条目' }),
-        h('div', { style: 'margin-top:10px;font-size:13.5px' }, '换个词，或点「筛选」放宽条件。')));
+        h('div', { style: 'margin-top:10px;font-size:.84375rem' }, '换个词，或点「筛选」放宽条件。')));
     } else {
       // 相关性：标题命中排前面
       if (terms.length) hits.sort((a, b) => score(b, terms) - score(a, terms));
@@ -1204,7 +1204,7 @@ function renderDocMd(root, md) {
 function renderGlossary() {
   const list = h('div', { class: 'melist' }, S.data.glossary.map((g) =>
     h('div', { class: 'mi', style: 'align-items:flex-start' },
-      h('span', { class: 'tx' }, h('b', { text: g.term }), h('small', { style: 'font-size:13.5px;line-height:1.7;margin-top:3px', text: g.meaning })))));
+      h('span', { class: 'tx' }, h('b', { text: g.term }), h('small', { style: 'font-size:.84375rem;line-height:1.7;margin-top:3px', text: g.meaning })))));
   setView(pageHead('术语表', '#/toc', '读懂数字'), h('p', { class: 'intro', text: '正文尽量用日常说法，但引用研究时免不了出现几个统计名词。看不懂就查这里。' }), list);
 }
 
@@ -1322,7 +1322,7 @@ async function init() {
     $('#view').append(h('div', { class: 'wrap' },
       h('div', { class: 'empty' }, icon('warn'),
         h('div', { text: '没能读取正文数据' }),
-        h('div', { style: 'margin-top:10px;font-size:13.5px;color:var(--t3)' }, '这个页面要通过 http 打开，并保证同目录下有 data.json（运行 node tools/site/build.mjs 生成）。'),
+        h('div', { style: 'margin-top:10px;font-size:.84375rem;color:var(--t3)' }, '这个页面要通过 http 打开，并保证同目录下有 data.json（运行 node tools/site/build.mjs 生成）。'),
         h('div', { style: 'margin-top:14px' }, h('button', { class: 'btn primary sm', on: { click: () => location.reload() } }, '重试')))));
     return;
   }
