@@ -466,10 +466,15 @@ html.dark .btn.primary{color:#12131a}
 .achieve-desc{font-size:.75rem;color:var(--t3);line-height:1.35}
 
 /* 关系图谱 */
-.graph-container{width:100%;height:520px;background:var(--bg-alt);border:1px solid var(--divider);border-radius:var(--radius);position:relative;overflow:hidden;margin:16px 0}
+.graph-container{width:100%;height:560px;background:var(--bg-alt);border:1px solid var(--divider);border-radius:var(--radius);position:relative;overflow:hidden;margin:16px 0;touch-action:none}
+.graph-container.fullscreen{position:fixed;inset:0;width:100vw;height:100vh;z-index:9999;border-radius:0;margin:0;border:0}
 .graph-canvas{width:100%;height:100%;display:block;cursor:grab}
 .graph-canvas:active{cursor:grabbing}
-.graph-tip{position:absolute;bottom:14px;left:14px;right:14px;background:var(--bg-elv);border:1px solid var(--divider);border-radius:var(--radius-sm);padding:10px 14px;box-shadow:var(--shadow-2);font-size:.8125rem;display:flex;align-items:center;justify-content:space-between;gap:12px;pointer-events:auto}
+.graph-tip{position:absolute;bottom:14px;left:14px;right:14px;background:var(--bg-elv);border:1px solid var(--divider);border-radius:var(--radius-sm);padding:10px 14px;box-shadow:var(--shadow-2);font-size:.8125rem;display:flex;align-items:center;justify-content:space-between;gap:12px;pointer-events:auto;z-index:10}
+.graph-tools{position:absolute;top:14px;right:14px;display:flex;gap:6px;background:var(--bg-elv);border:1px solid var(--divider);border-radius:8px;padding:4px;box-shadow:var(--shadow-1);z-index:10}
+.graph-btn{width:32px;height:32px;border-radius:6px;display:grid;place-items:center;color:var(--t2);transition:background .18s,color .18s}
+.graph-btn:hover{background:var(--bg-soft);color:var(--t1)}
+.graph-btn svg{width:18px;height:18px;fill:currentColor}
 
 /* 卡片分享弹窗 */
 .card-preview-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;padding:8px 0}

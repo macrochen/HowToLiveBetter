@@ -91,7 +91,11 @@ const ICONS = {
   compass: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5.5-2.5l7.51-3.49L17.5 6.5 9.99 9.99 6.5 17.5zm5.5-6.6c.61 0 1.1.49 1.1 1.1s-.49 1.1-1.1 1.1-1.1-.49-1.1-1.1.49-1.1 1.1-1.1z',
   timeline: 'M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z',
   fire: 'M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM12 20c-3.31 0-6-2.69-6-6 0-1.53.58-3.05 1.58-4.23.47 2.09 2.27 3.66 4.42 3.66 1.83 0 3.39-1.12 3.96-2.73 1.25 1.76 2.04 3.76 2.04 5.3 0 3.31-2.69 6-6 6z',
-  zen: 'M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12zm-8-3h8v-2h-8v2zm0-4h8V7h-8v2z'
+  zen: 'M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12zm-8-3h8v-2h-8v2zm0-4h8V7h-8v2z',
+  expand: 'M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z',
+  compress: 'M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-14v3h3v2h-5V5h2z',
+  plus: 'M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z',
+  minus: 'M19 13H5v-2h14v2z'
 };
 function icon(name) {
   const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -1977,8 +1981,16 @@ function renderZenMode(sec, n) {
 function renderGraph() {
   const container = h('div', { class: 'graph-container' });
   const canvas = h('canvas', { class: 'graph-canvas' });
-  const tip = h('div', { class: 'graph-tip', text: '拖拽视野或点击节点查看条目。滚轮可缩放。' });
-  container.append(canvas, tip);
+  const tip = h('div', { class: 'graph-tip', text: '拖拽视野或点击节点查看条目。滚轮或双指可自由缩放。' });
+
+  // 浮动控制工具栏（放大、缩小、重置、全屏）
+  const tools = h('div', { class: 'graph-tools' });
+  const btnZoomIn = h('button', { class: 'graph-btn', title: '放大', 'aria-label': '放大' }, icon('plus'));
+  const btnZoomOut = h('button', { class: 'graph-btn', title: '缩小', 'aria-label': '缩小' }, icon('minus'));
+  const btnReset = h('button', { class: 'graph-btn', title: '重置视图', 'aria-label': '重置视图' }, icon('refresh'));
+  const btnFs = h('button', { class: 'graph-btn', title: '全屏模式', 'aria-label': '全屏模式' }, icon('expand'));
+  tools.append(btnZoomIn, btnZoomOut, btnReset, btnFs);
+  container.append(canvas, tools, tip);
 
   setView(
     pageHead('图谱', '#/', '全书交叉引用关系图谱'),
@@ -1988,13 +2000,42 @@ function renderGraph() {
 
   // 初始化 Canvas 关系力导向图
   requestAnimationFrame(() => {
-    const W = container.clientWidth || 600, H = container.clientHeight || 520;
+    let W = container.clientWidth || 600, H = container.clientHeight || 560;
     const dpr = window.devicePixelRatio || 1;
     canvas.width = W * dpr; canvas.height = H * dpr;
     const ctx = canvas.getContext('2d');
-    ctx.scale(dpr, dpr);
 
-    // 筛选有引用的前 80 个核心条目节点
+    const resize = () => {
+      W = container.clientWidth || 600; H = container.clientHeight || 560;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+    };
+    window.addEventListener('resize', resize);
+
+    // 全屏切换
+    const toggleFullscreen = () => {
+      const isFs = container.classList.toggle('fullscreen');
+      const svg = btnFs.querySelector('svg');
+      if (svg) svg.innerHTML = '<path d="' + (isFs ? ICONS.compress : ICONS.expand) + '"/>';
+      btnFs.title = isFs ? '退出全屏' : '全屏模式';
+      if (isFs && container.requestFullscreen) {
+        container.requestFullscreen().catch(() => {});
+      } else if (!isFs && document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+      setTimeout(resize, 100);
+    };
+    btnFs.addEventListener('click', toggleFullscreen);
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement && container.classList.contains('fullscreen')) {
+        container.classList.remove('fullscreen');
+        const svg = btnFs.querySelector('svg');
+        if (svg) svg.innerHTML = '<path d="' + ICONS.expand + '"/>';
+        btnFs.title = '全屏模式';
+        setTimeout(resize, 100);
+      }
+    });
+
+    // 筛选有引用的前 120 个核心条目节点
     const nodes = [];
     const nodeMap = new Map();
     const links = [];
@@ -2002,7 +2043,7 @@ function renderGraph() {
     for (const e of all.slice(0, 120)) {
       if (!e.gain && !e.note) continue;
       const key = e.sec + '-' + e.n;
-      const nObj = { id: key, sec: e.sec, n: e.n, title: plain(e.title), x: W / 2 + (Math.random() - 0.5) * 260, y: H / 2 + (Math.random() - 0.5) * 220, vx: 0, vy: 0, r: e.ratio === '极高' ? 12 : 8 };
+      const nObj = { id: key, sec: e.sec, n: e.n, title: plain(e.title), x: W / 2 + (Math.random() - 0.5) * 320, y: H / 2 + (Math.random() - 0.5) * 260, vx: 0, vy: 0, r: e.ratio === '极高' ? 12 : 8 };
       nodes.push(nObj);
       nodeMap.set(key, nObj);
     }
@@ -2020,19 +2061,20 @@ function renderGraph() {
       }
     }
 
-    let scale = 1, panX = 0, panY = 0, dragging = false, lastX = 0, lastY = 0;
+    let scale = 1, panX = 0, panY = 0, dragging = false, lastX = 0, lastY = 0, dragDist = 0;
     let animId = null, step = 0;
+    let touchDistance = 0;
 
     const tick = () => {
-      if (step < 70) {
-        // 简单弹簧力导向物理迭代
+      if (step < 80) {
+        // 力导向物理迭代
         for (let i = 0; i < nodes.length; i++) {
           for (let j = i + 1; j < nodes.length; j++) {
             const a = nodes[i], b = nodes[j];
             let dx = b.x - a.x, dy = b.y - a.y;
             let dist = Math.sqrt(dx * dx + dy * dy) || 1;
-            if (dist < 120) {
-              let f = (120 - dist) / dist * 0.08;
+            if (dist < 130) {
+              let f = (130 - dist) / dist * 0.08;
               a.vx -= dx * f; a.vy -= dy * f; b.vx += dx * f; b.vy += dy * f;
             }
           }
@@ -2040,24 +2082,26 @@ function renderGraph() {
         for (const l of links) {
           let dx = l.t.x - l.s.x, dy = l.t.y - l.s.y;
           let dist = Math.sqrt(dx * dx + dy * dy) || 1;
-          let f = (dist - 60) * 0.02;
+          let f = (dist - 70) * 0.02;
           l.s.vx += dx / dist * f; l.s.vy += dy / dist * f;
           l.t.vx -= dx / dist * f; l.t.vy -= dy / dist * f;
         }
         for (const n of nodes) {
           n.x += n.vx; n.y += n.vy;
-          n.vx *= 0.85; n.vy *= 0.85;
+          n.vx *= 0.84; n.vy *= 0.84;
         }
         step++;
       }
 
       ctx.save();
-      ctx.clearRect(0, 0, W, H);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.scale(dpr, dpr);
       ctx.translate(panX, panY);
       ctx.scale(scale, scale);
 
       // 连线
-      ctx.strokeStyle = document.documentElement.classList.contains('dark') ? 'rgba(255,255,255,0.12)' : 'rgba(52,81,178,0.14)';
+      ctx.strokeStyle = document.documentElement.classList.contains('dark') ? 'rgba(255,255,255,0.13)' : 'rgba(52,81,178,0.15)';
       ctx.lineWidth = 1;
       for (const l of links) {
         ctx.beginPath(); ctx.moveTo(l.s.x, l.s.y); ctx.lineTo(l.t.x, l.t.y); ctx.stroke();
@@ -2066,7 +2110,7 @@ function renderGraph() {
       for (const n of nodes) {
         ctx.fillStyle = n.r >= 12 ? '#3451b2' : '#18794e';
         ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = document.documentElement.classList.contains('dark') ? '#aaa' : '#555';
+        ctx.fillStyle = document.documentElement.classList.contains('dark') ? '#ccc' : '#444';
         ctx.font = '10px sans-serif';
         ctx.fillText(n.title.slice(0, 7), n.x + n.r + 3, n.y + 3);
       }
@@ -2075,23 +2119,92 @@ function renderGraph() {
     };
     tick();
 
-    canvas.addEventListener('mousedown', (e) => { dragging = true; lastX = e.clientX; lastY = e.clientY; });
+    // 缩放函数（以任意点为中心缩放）
+    const zoomAt = (centerX, centerY, factor) => {
+      const nextScale = Math.max(0.25, Math.min(5.0, scale * factor));
+      if (nextScale === scale) return;
+      panX = centerX - (centerX - panX) * (nextScale / scale);
+      panY = centerY - (centerY - panY) * (nextScale / scale);
+      scale = nextScale;
+    };
+
+    // 滚轮缩放：必须阻止默认页面滚动行为
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+      const factor = e.deltaY < 0 ? 1.15 : 0.87;
+      zoomAt(mx, my, factor);
+    }, { passive: false });
+
+    // 工具栏缩放按钮（以画布中心为锚点）
+    btnZoomIn.addEventListener('click', () => zoomAt(W / 2, H / 2, 1.25));
+    btnZoomOut.addEventListener('click', () => zoomAt(W / 2, H / 2, 0.8));
+    btnReset.addEventListener('click', () => { scale = 1; panX = 0; panY = 0; });
+
+    // 鼠标拖拽平移与点击
+    canvas.addEventListener('mousedown', (e) => {
+      dragging = true; lastX = e.clientX; lastY = e.clientY; dragDist = 0;
+    });
     window.addEventListener('mouseup', () => { dragging = false; });
     canvas.addEventListener('mousemove', (e) => {
       if (!dragging) return;
-      panX += e.clientX - lastX; panY += e.clientY - lastY;
+      const dx = e.clientX - lastX, dy = e.clientY - lastY;
+      panX += dx; panY += dy;
+      dragDist += Math.abs(dx) + Math.abs(dy);
       lastX = e.clientX; lastY = e.clientY;
     });
+
+    // 节点点击识别（拖动距离小于 6px 视为点击）
     canvas.addEventListener('click', (e) => {
+      if (dragDist > 6) return;
       const rect = canvas.getBoundingClientRect();
       const mx = (e.clientX - rect.left - panX) / scale;
       const my = (e.clientY - rect.top - panY) / scale;
-      const clicked = nodes.find((n) => Math.hypot(n.x - mx, n.y - my) <= n.r + 4);
+      const clicked = nodes.find((n) => Math.hypot(n.x - mx, n.y - my) <= n.r + 6);
       if (clicked) {
         const item = ITEMS.get(clicked.id);
         tip.innerHTML = '<b>' + clicked.id + ' ' + clicked.title + '</b> · ' + plain(item ? item.human : '') +
-          ' <a class="btn primary sm" style="margin-left:10px" href="#/e/' + clicked.sec + '/' + clicked.n + '">看此条</a>';
+          ' <a class="btn primary sm" style="margin-left:10px" href="#/e/' + clicked.sec + '/' + clicked.n + '">查看详情</a>';
       }
+    });
+
+    // 移动端手势（单指平移、双指缩放）
+    canvas.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        dragging = true; lastX = e.touches[0].clientX; lastY = e.touches[0].clientY; dragDist = 0;
+      } else if (e.touches.length === 2) {
+        dragging = false;
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        touchDistance = Math.hypot(dx, dy);
+      }
+    }, { passive: false });
+
+    canvas.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      if (e.touches.length === 1 && dragging) {
+        const dx = e.touches[0].clientX - lastX, dy = e.touches[0].clientY - lastY;
+        panX += dx; panY += dy;
+        dragDist += Math.abs(dx) + Math.abs(dy);
+        lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
+      } else if (e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const dist = Math.hypot(dx, dy);
+        if (touchDistance > 0) {
+          const rect = canvas.getBoundingClientRect();
+          const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+          const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+          zoomAt(cx, cy, dist / touchDistance);
+        }
+        touchDistance = dist;
+      }
+    }, { passive: false });
+
+    canvas.addEventListener('touchend', (e) => {
+      if (e.touches.length === 0) dragging = false;
     });
   });
 }
