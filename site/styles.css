@@ -385,3 +385,92 @@ html.dark .btn.primary{color:#12131a}
 @media(prefers-reduced-motion:reduce){
   *{animation-duration:.001ms!important;transition-duration:.001ms!important}
 }
+
+/* ================= 扩展交互功能样式 ================= */
+
+/* 操作按钮扩展（朗读、分享卡片、日历） */
+.act.voice{color:var(--brand-1)}
+.act.voice.playing{color:#fff;background:var(--brand-1);animation:voice-pulse 1.2s infinite ease-in-out}
+.act.pic{color:var(--yellow-1)}
+.act.cal{color:var(--green-1)}
+@keyframes voice-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+
+/* 情境横向滚动条 & 步骤条 */
+.sit-scroll{display:flex;gap:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:6px 2px 14px;scroll-snap-type:x mandatory}
+.sit-card{flex:0 0 200px;scroll-snap-align:start;background:var(--bg-alt);border:1px solid var(--divider-soft);border-radius:var(--radius);padding:14px;display:flex;flex-direction:column;gap:6px;transition:transform .18s,border-color .18s}
+.sit-card:hover{transform:translateY(-2px);border-color:var(--brand-1);text-decoration:none}
+.sit-card .sit-ico{width:36px;height:36px;border-radius:10px;background:var(--brand-soft);color:var(--brand-1);display:grid;place-items:center}
+.sit-card .sit-ico svg{width:20px;height:20px;fill:currentColor}
+.sit-card b{font-size:.9375rem;color:var(--t1)}
+.sit-card small{font-size:.78125rem;color:var(--t3);line-height:1.4}
+.steps-wrap{display:flex;flex-direction:column;gap:16px;margin:16px 0}
+.step-card{display:flex;gap:14px;background:var(--bg);border:1px solid var(--divider);border-radius:var(--radius);padding:16px}
+.step-num{width:30px;height:30px;border-radius:50%;background:var(--brand-1);color:#fff;font-weight:700;font-size:.875rem;display:grid;place-items:center;flex:none}
+.step-body{flex:1;min-width:0}
+.step-body h3{font-size:1rem;margin-bottom:6px}
+
+/* 精选路径 */
+.paths-grid{display:grid;grid-template-columns:1fr;gap:14px;margin:14px 0}
+@media(min-width:640px){.paths-grid{grid-template-columns:repeat(2,1fr)}}
+.path-card{background:var(--bg-alt);border:1px solid var(--divider-soft);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:10px;transition:border-color .18s}
+.path-card:hover{border-color:var(--brand-1);text-decoration:none}
+.path-card .h{display:flex;align-items:center;gap:10px}
+.path-card .h b{flex:1;font-size:1rem;color:var(--t1)}
+.path-card p{font-size:.84375rem;color:var(--t2);line-height:1.6}
+.path-progress{display:flex;align-items:center;gap:10px;font-size:.78125rem;color:var(--t3)}
+.path-progress .bar{flex:1;height:6px;border-radius:3px;background:var(--bg-mute);overflow:hidden}
+.path-progress .fill{height:100%;background:var(--green-1);border-radius:3px}
+
+/* 时间线 */
+.timeline-tabs{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:4px 2px 14px}
+.tl-btn{flex:none;padding:6px 16px;border-radius:999px;border:1px solid var(--divider);background:var(--bg-alt);font-size:.875rem;font-weight:500;color:var(--t2);transition:all .18s}
+.tl-btn:hover{color:var(--t1);border-color:var(--brand-1)}
+.tl-btn.on{background:var(--brand-1);color:#fff;border-color:var(--brand-1)}
+
+/* 嵌入式计算器 */
+.calc-box{margin:12px 0;background:var(--bg-soft);border:1px solid var(--divider);border-radius:var(--radius-sm);padding:16px}
+.calc-box h4{display:flex;align-items:center;gap:8px;font-size:.9375rem;margin-bottom:12px;color:var(--t1)}
+.calc-box h4 svg{width:18px;height:18px;fill:var(--brand-1)}
+.calc-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:14px}
+.calc-field label{display:block;font-size:.78125rem;color:var(--t3);margin-bottom:4px}
+.calc-field input,.calc-field select{width:100%;padding:7px 10px;border:1px solid var(--divider);border-radius:8px;background:var(--bg-elv);font-size:.875rem}
+.calc-result{background:var(--bg-elv);border-radius:8px;padding:12px 14px;border:1px solid var(--divider-soft);font-size:.875rem;line-height:1.7}
+.calc-result b{color:var(--brand-1);font-size:1.125rem}
+.calc-contrast{margin-top:6px;padding-top:6px;border-top:1px dashed var(--divider);color:var(--red-1);font-size:.8125rem}
+
+/* 大字报模式 (Zen Mode) */
+.zen-wrap{min-height:75vh;display:flex;flex-direction:column;justify-content:center;padding:20px 0}
+.zen-card{background:var(--bg-alt);border:1px solid var(--divider);border-radius:var(--radius-lg);padding:32px 24px;box-shadow:var(--shadow-2);display:flex;flex-direction:column;gap:20px;text-align:left;position:relative}
+.zen-tag{font-size:.9375rem;font-weight:700;color:var(--brand-1);text-transform:uppercase;letter-spacing:.04em}
+.zen-title{font-size:1.45rem;font-weight:750;line-height:1.4;color:var(--t1)}
+.zen-human{font-size:1.35rem;font-weight:550;line-height:1.8;color:var(--t1);padding:18px 20px;background:var(--brand-soft);border-radius:var(--radius);border-left:4px solid var(--brand-1)}
+.zen-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;flex-wrap:wrap}
+.zen-nav-btn{padding:10px 22px;border-radius:999px;font-size:1rem;font-weight:600}
+
+/* 个人仪表盘与雷达图 */
+.radar-card{background:var(--bg-alt);border:1px solid var(--divider);border-radius:var(--radius);padding:20px;margin:16px 0;text-align:center}
+.radar-svg{max-width:380px;margin:0 auto;display:block}
+.defense-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:16px 0}
+.def-item{background:var(--bg);border:1px solid var(--divider-soft);border-radius:var(--radius-sm);padding:12px 14px}
+.def-item .h{display:flex;justify-content:space-between;font-size:.875rem;font-weight:650;margin-bottom:6px}
+.def-item .bar{height:6px;border-radius:3px;background:var(--bg-mute);overflow:hidden}
+.def-item .fill{height:100%;border-radius:3px;background:var(--brand-1)}
+
+/* 成就系统 (勋章墙) */
+.achieve-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin:16px 0}
+.achieve-item{background:var(--bg-alt);border:1px solid var(--divider-soft);border-radius:var(--radius);padding:14px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;transition:transform .18s}
+.achieve-item.unlocked{border-color:var(--yellow-1);background:color-mix(in srgb,var(--yellow-soft) 30%,var(--bg-alt))}
+.achieve-item.locked{opacity:.45;filter:grayscale(1)}
+.achieve-icon{width:46px;height:46px;border-radius:50%;background:var(--bg-elv);box-shadow:var(--shadow-1);display:grid;place-items:center;font-size:1.4rem}
+.achieve-name{font-size:.875rem;font-weight:650;color:var(--t1)}
+.achieve-desc{font-size:.75rem;color:var(--t3);line-height:1.35}
+
+/* 关系图谱 */
+.graph-container{width:100%;height:520px;background:var(--bg-alt);border:1px solid var(--divider);border-radius:var(--radius);position:relative;overflow:hidden;margin:16px 0}
+.graph-canvas{width:100%;height:100%;display:block;cursor:grab}
+.graph-canvas:active{cursor:grabbing}
+.graph-tip{position:absolute;bottom:14px;left:14px;right:14px;background:var(--bg-elv);border:1px solid var(--divider);border-radius:var(--radius-sm);padding:10px 14px;box-shadow:var(--shadow-2);font-size:.8125rem;display:flex;align-items:center;justify-content:space-between;gap:12px;pointer-events:auto}
+
+/* 卡片分享弹窗 */
+.card-preview-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;padding:8px 0}
+.card-canvas{max-width:100%;border-radius:12px;box-shadow:var(--shadow-2)}
