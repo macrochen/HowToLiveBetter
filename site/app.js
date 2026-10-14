@@ -891,6 +891,10 @@ function renderHome() {
     h('a', { class: 'mi', href: '#/graph' },
       h('span', { class: 'ico' }, icon('graph')),
       h('span', { class: 'tx' }, h('b', { text: '全书交叉引用关系图谱' }), h('small', { text: '力导向动态网络，直观探索全书条目关联' })),
+      icon('right')),
+    h('a', { class: 'mi', href: '#/glossary' },
+      h('span', { class: 'ico' }, icon('bulb')),
+      h('span', { class: 'tx' }, h('b', { text: '术语表 · 读懂数字' }), h('small', { text: d.glossary.length + ' 个统计与制度名词（HR/RR/LPR/门慢等）' })),
       icon('right'))
   );
 
@@ -923,14 +927,6 @@ function renderHome() {
     nodes.push(h('div', { class: 'section-title' }, h('h2', { text: '今天做一件' }), h('small', { text: '从性价比极高的条目里挑一条' })),
       entryCard(pick, []));
   }
-
-  nodes.push(h('div', { class: 'section-title' }, h('h2', { text: '长文与工具' }), h('a', { class: 'more', href: '#/toc', text: '更多' })),
-    h('div', { class: 'melist' },
-      d.docs.slice(0, 4).map((doc) => h('a', { class: 'mi', href: '#/doc/' + encodeURIComponent(doc.slug), on: { click: (ev) => { ev.preventDefault(); go('#/doc/' + encodeURIComponent(doc.slug)); } } },
-        h('span', { class: 'ico' }, icon('book')), h('span', { class: 'tx' }, h('b', { text: doc.title })), icon('right'))),
-      h('a', { class: 'mi', href: '#/glossary', on: { click: (ev) => { ev.preventDefault(); go('#/glossary'); } } },
-        h('span', { class: 'ico' }, icon('bulb')), h('span', { class: 'tx' }, h('b', { text: '术语表' }), h('small', { text: d.glossary.length + ' 个统计与制度名词' })), icon('right')),
-    ));
 
   setView(...nodes);
 }
